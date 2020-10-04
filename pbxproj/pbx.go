@@ -3,6 +3,7 @@ package pbxproj
 import (
 	"PBXProjGo/pbxproj/parser"
 	"os"
+	"strings"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
@@ -66,6 +67,17 @@ func (pbx PBXProject) Save(filePath string) error {
 	f.Sync()
 
 	return nil
+}
+
+func (pbx PBXProject) GetGroup(name string) string {
+	objMap := findObjs(pbx.project)
+	group := findSection(objMap, "PBXGroup")
+	for key, value := range group {
+		if 0 == strings.Compare(value["name"], name) {
+			return key
+		}
+	}
+	return ""
 }
 
 func (pbx PBXProject) AddFile() {
