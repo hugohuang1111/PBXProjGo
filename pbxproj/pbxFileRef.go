@@ -1,6 +1,8 @@
 package pbxproj
 
-import "path"
+import (
+	"path"
+)
 
 const (
 	DEFAULT_SOURCETREE         = "\"<group>\""
@@ -92,6 +94,9 @@ func init() {
 
 func detectType(filePath string) string {
 	ext := path.Ext(filePath)
+	if len(ext) > 1 {
+		ext = ext[1:]
+	}
 	if val, ok := FILETYPE_BY_EXTENSION[ext]; ok {
 		return val
 	}
@@ -176,14 +181,34 @@ func detectSourcetree(fileRef pbxFileReference) string {
 // return defaultGroup;
 // }
 
-func newPBXFileRef(filePath string) pbxFileReference {
-	var fileRef pbxFileReference
+// func newPBXFileRef(filePath string) pbxFileReference {
+// 	var fileRef pbxFileReference
 
-	fileRef.isa = "PBXFileReference"
-	fileRef.lastKnownFileType = detectType(filePath)
-	fileRef.name = path.Base(filePath)
-	fileRef.path = filePath
-	fileRef.sourceTree = detectSourcetree(fileRef)
+// 	fileRef.isa = "PBXFileReference"
+// 	fileRef.lastKnownFileType = detectType(filePath)
+// 	fileRef.name = path.Base(filePath)
+// 	fileRef.path = filePath
+// 	fileRef.sourceTree = detectSourcetree(fileRef)
 
-	return fileRef
+// 	return fileRef
+// }
+
+func newPBXFileRef(filePath string) pbxMap {
+	m := make(pbxMap, 0)
+	s := pbxMapSection{}
+	s.value = make(map[string]interface{})
+	s.value["isa"] = "PBXFileReference"
+	filetype := detectType(filePath)
+	s.value["lastKnownFileType"] = filetype
+	s.value["name"] = path.Base(filePath)
+	s.value["path"] = filePath
+	if sourcetree, exist := SOURCETREE_BY_FILETYPE[filetype]; exist {
+		s.value["sourceTree"] = sourcetree
+	} else {
+		s.value["sourceTree"] = DEFAULT_SOURCETREE
+	}
+
+	m = append(m, s)
+
+	return m
 }

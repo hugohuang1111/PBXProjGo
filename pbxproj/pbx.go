@@ -2,6 +2,7 @@ package pbxproj
 
 import (
 	"PBXProjGo/pbxproj/parser"
+	"fmt"
 	"os"
 	"strings"
 
@@ -94,11 +95,62 @@ func (pbx PBXProject) FindGroupUUID(name string) string {
 }
 
 //AddFile add file to group
-func (pbx PBXProject) AddFile(group string, file string) error {
-	if isUUID(group) {
-
+func (pbx PBXProject) AddFile(group string, file string) string {
+	uuid := group
+	if !isUUID(group) {
+		uuid = pbx.FindGroupUUID(group)
 	}
+
+	fid, _ := pbx.addFileReference(file)
+	val := pbx.getValueByUUID(uuid)
+	vMap := val.(pbxMap)
+	vMap.addValue("", "children", fid)
+
+	return fid
+}
+
+// AddGroup add group
+func (pbx PBXProject) AddGroup(group string) string {
+	key, _ := pbx.addGroup(group)
+
+	return key
+}
+
+//AddFramework add framework to group
+func (pbx PBXProject) AddFramework(file string) error {
+	uuid := pbx.FindGroupUUID("Frameworks")
+	if 0 == len(uuid) {
+		uuid = pbx.addGroup("Frameworks")
+	}
+
+	fid, _ := pbx.addFileReference(file)
+	val := pbx.getValueByUUID(uuid)
+	vMap := val.(pbxMap)
+	vMap.addValue("", "children", fid)
+
 	return nil
+}
+
+func (pbx PBXProject) addFileReference(filePath string) (string, pbxMap) {
+	frSection := pbx.getSection("PBXFileReference")
+	key := genUUID()
+	val := newPBXFileRef(filePath)
+	frSection.value[key] = val
+
+	pbx.uuidMap[key] = fmt.Sprintf("/* %v */", val.getValue("name"))
+
+	return key, val
+}
+
+func (pbx PBXProject) addGroup(group string) (string, pbxMap) {
+	gpSection := pbx.getSection("PBXGroup")
+	key := genUUID()
+	val := newPBXGroup(group)
+	gpSection.value[key] = val
+
+	pbx.uuidMap[key] = fmt.Sprintf("/* %v */", val.getValue("name"))
+
+	return key, val
 }
 
 func (pbx PBXProject) getObject() pbxMap {
@@ -114,5 +166,22 @@ func (pbx PBXProject) getObject() pbxMap {
 
 func (pbx PBXProject) getValueByUUID(uuid string) interface{} {
 	objMap := pbx.getObject()
+	for _, section := range objMap {
+		if val, ok := section.value[uuid]; ok {
+			return val
+		}
+	}
 
+	return nil
+}
+
+func (pbx PBXProject) getSection(name string) pbxMapSection {
+	objMap := pbx.getObject()
+	for _, section := range objMap {
+		if 0 == strings.Compare(section.name, name) {
+			return section
+		}
+	}
+
+	return pbxMapSection{}
 }

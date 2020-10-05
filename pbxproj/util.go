@@ -1,6 +1,7 @@
 package pbxproj
 
 import (
+	"os"
 	"strings"
 
 	"github.com/google/uuid"
@@ -33,4 +34,12 @@ func genUUID() string {
 	s = strings.Replace(s, "-", "", -1)
 
 	return s[0:24]
+}
+
+func fileIsExist(filePath string) bool {
+	var exist = true
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		exist = false
+	}
+	return exist
 }
