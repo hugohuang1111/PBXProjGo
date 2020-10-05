@@ -16,8 +16,6 @@ type pbxMapSection struct {
 	value map[string]interface{}
 }
 
-type pbxMap []pbxMapSection
-
 // PBXProject pbx project tree
 type PBXProject struct {
 	fileEncode string
@@ -69,17 +67,52 @@ func (pbx PBXProject) Save(filePath string) error {
 	return nil
 }
 
-func (pbx PBXProject) GetGroup(name string) string {
-	objMap := findObjs(pbx.project)
-	group := findSection(objMap, "PBXGroup")
-	for key, value := range group {
-		if 0 == strings.Compare(value["name"], name) {
-			return key
-		}
+// FindGroupUUID find group uuid by name
+func (pbx PBXProject) FindGroupUUID(name string) string {
+	objMap := pbx.getObject()
+	if nil == objMap {
+		return ""
 	}
-	return ""
+	k, _ := objMap.searchWithSection("PBXGroup", func(key string, val interface{}) bool {
+		vMap := val.(pbxMap)
+		k, _ := vMap.search(func(key string, val interface{}) bool {
+			if 0 != strings.Compare(key, "name") {
+				return false
+			}
+			sName := val.(string)
+			if strings.Compare(sName, name) == 0 {
+				return true
+			}
+			return false
+		})
+		if 0 != len(k) {
+			return true
+		}
+		return false
+	})
+	return k
 }
 
-func (pbx PBXProject) AddFile() {
+//AddFile add file to group
+func (pbx PBXProject) AddFile(group string, file string) error {
+	if isUUID(group) {
+
+	}
+	return nil
+}
+
+func (pbx PBXProject) getObject() pbxMap {
+	_, v := pbx.project.search(func(key string, val interface{}) bool {
+		if 0 == strings.Compare(key, "objects") {
+			return true
+		}
+		return false
+	})
+
+	return v.(pbxMap)
+}
+
+func (pbx PBXProject) getValueByUUID(uuid string) interface{} {
+	objMap := pbx.getObject()
 
 }

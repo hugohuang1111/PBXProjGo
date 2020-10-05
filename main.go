@@ -17,6 +17,8 @@ func main() {
 		fmt.Println(e.Error())
 		return
 	}
+
+	// uuid := pbxProject.FindGroupUUID("ios")
 	e = pbxProject.Save("newpbx.pbxproj")
 	if nil != e {
 		fmt.Println(e.Error())
