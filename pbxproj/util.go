@@ -33,7 +33,7 @@ func genUUID() string {
 
 	s = strings.Replace(s, "-", "", -1)
 
-	return s[0:24]
+	return strings.ToUpper(s[0:24])
 }
 
 func fileIsExist(filePath string) bool {

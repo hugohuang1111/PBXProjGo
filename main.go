@@ -19,6 +19,17 @@ func main() {
 	}
 
 	// uuid := pbxProject.FindGroupUUID("ios")
+	uuid := pbxProject.AddFile("ios", "./projects/AppDelegate.h")
+	if 0 == len(uuid) {
+		fmt.Println("Error, add file failed")
+		return
+	}
+	uuid = pbxProject.AddFramework("./project/a.framework")
+	if 0 == len(uuid) {
+		fmt.Println("Error, add framework failed")
+		return
+	}
+
 	e = pbxProject.Save("newpbx.pbxproj")
 	if nil != e {
 		fmt.Println(e.Error())

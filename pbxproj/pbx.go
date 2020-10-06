@@ -68,13 +68,68 @@ func (pbx PBXProject) Save(filePath string) error {
 	return nil
 }
 
-// FindGroupUUID find group uuid by name
-func (pbx PBXProject) FindGroupUUID(name string) string {
+// FindGroupByName find group uuid by name
+func (pbx PBXProject) FindGroupByName(name string) string {
+	k, _ := pbx.findGroupByName(name)
+
+	return k
+}
+
+//AddFile add file to group
+func (pbx PBXProject) AddFile(group string, file string) string {
+	uuid := group
+	var vMap pbxMap = nil
+	if !isUUID(group) {
+		uuid, vMap = pbx.findGroupByName(group)
+	}
+
+	fid, _ := pbx.addFileReference(file)
+	if nil == vMap {
+		val := pbx.getValueByUUID(uuid)
+		vMap = val.(pbxMap)
+	}
+	vMap.addValue("", "children", fid)
+
+	return fid
+}
+
+// AddGroup add group
+func (pbx PBXProject) AddGroup(group string) string {
+	key, _ := pbx.addGroup(group)
+
+	return key
+}
+
+//AddFramework add framework to group
+func (pbx PBXProject) AddFramework(file string) string {
+	uuid, gpMap := pbx.findGroupByName("Frameworks")
+	if 0 == len(uuid) {
+		uuid, gpMap = pbx.addGroup("Frameworks")
+	}
+
+	fid, _ := pbx.addFileReference(file)
+	gpMap.addValue("", "children", fid)
+
+	return fid
+}
+
+func (pbx PBXProject) addFileReference(filePath string) (string, pbxMap) {
+	frSection := pbx.getSection("PBXFileReference")
+	key := genUUID()
+	val := newPBXFileRef(filePath)
+	frSection.value[key] = val
+
+	pbx.uuidMap[key] = fmt.Sprintf("/* %v */", val.getValue("name"))
+
+	return key, val
+}
+
+func (pbx PBXProject) findGroupByName(name string) (string, pbxMap) {
 	objMap := pbx.getObject()
 	if nil == objMap {
-		return ""
+		return "", nil
 	}
-	k, _ := objMap.searchWithSection("PBXGroup", func(key string, val interface{}) bool {
+	k, v := objMap.searchWithSection("PBXGroup", func(key string, val interface{}) bool {
 		vMap := val.(pbxMap)
 		k, _ := vMap.search(func(key string, val interface{}) bool {
 			if 0 != strings.Compare(key, "name") {
@@ -91,55 +146,8 @@ func (pbx PBXProject) FindGroupUUID(name string) string {
 		}
 		return false
 	})
-	return k
-}
 
-//AddFile add file to group
-func (pbx PBXProject) AddFile(group string, file string) string {
-	uuid := group
-	if !isUUID(group) {
-		uuid = pbx.FindGroupUUID(group)
-	}
-
-	fid, _ := pbx.addFileReference(file)
-	val := pbx.getValueByUUID(uuid)
-	vMap := val.(pbxMap)
-	vMap.addValue("", "children", fid)
-
-	return fid
-}
-
-// AddGroup add group
-func (pbx PBXProject) AddGroup(group string) string {
-	key, _ := pbx.addGroup(group)
-
-	return key
-}
-
-//AddFramework add framework to group
-func (pbx PBXProject) AddFramework(file string) error {
-	uuid := pbx.FindGroupUUID("Frameworks")
-	if 0 == len(uuid) {
-		uuid = pbx.addGroup("Frameworks")
-	}
-
-	fid, _ := pbx.addFileReference(file)
-	val := pbx.getValueByUUID(uuid)
-	vMap := val.(pbxMap)
-	vMap.addValue("", "children", fid)
-
-	return nil
-}
-
-func (pbx PBXProject) addFileReference(filePath string) (string, pbxMap) {
-	frSection := pbx.getSection("PBXFileReference")
-	key := genUUID()
-	val := newPBXFileRef(filePath)
-	frSection.value[key] = val
-
-	pbx.uuidMap[key] = fmt.Sprintf("/* %v */", val.getValue("name"))
-
-	return key, val
+	return k, v.(pbxMap)
 }
 
 func (pbx PBXProject) addGroup(group string) (string, pbxMap) {
