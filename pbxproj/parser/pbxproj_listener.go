@@ -29,12 +29,6 @@ type PBXProjListener interface {
 	// EnterValue is called when entering the value production.
 	EnterValue(c *ValueContext)
 
-	// EnterSectionName is called when entering the sectionName production.
-	EnterSectionName(c *SectionNameContext)
-
-	// EnterSectionNoName is called when entering the sectionNoName production.
-	EnterSectionNoName(c *SectionNoNameContext)
-
 	// ExitProject is called when exiting the project production.
 	ExitProject(c *ProjectContext)
 
@@ -55,10 +49,4 @@ type PBXProjListener interface {
 
 	// ExitValue is called when exiting the value production.
 	ExitValue(c *ValueContext)
-
-	// ExitSectionName is called when exiting the sectionName production.
-	ExitSectionName(c *SectionNameContext)
-
-	// ExitSectionNoName is called when exiting the sectionNoName production.
-	ExitSectionNoName(c *SectionNoNameContext)
 }

@@ -16,58 +16,50 @@ var _ = reflect.Copy
 var _ = strconv.Itoa
 
 var parserATN = []uint16{
-	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 17, 90, 4,
+	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 15, 71, 4,
 	2, 9, 2, 4, 3, 9, 3, 4, 4, 9, 4, 4, 5, 9, 5, 4, 6, 9, 6, 4, 7, 9, 7, 4,
-	8, 9, 8, 4, 9, 9, 9, 4, 10, 9, 10, 3, 2, 3, 2, 5, 2, 23, 10, 2, 3, 2, 3,
-	2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 3, 4, 6, 4, 34, 10, 4, 13, 4, 14,
-	4, 35, 3, 4, 5, 4, 39, 10, 4, 3, 4, 3, 4, 3, 5, 3, 5, 3, 5, 3, 5, 7, 5,
-	47, 10, 5, 12, 5, 14, 5, 50, 11, 5, 3, 5, 5, 5, 53, 10, 5, 3, 5, 3, 5,
-	3, 6, 3, 6, 5, 6, 59, 10, 6, 3, 7, 3, 7, 3, 8, 3, 8, 3, 8, 5, 8, 66, 10,
-	8, 3, 9, 3, 9, 3, 9, 3, 9, 3, 9, 3, 9, 6, 9, 74, 10, 9, 13, 9, 14, 9, 75,
-	3, 9, 3, 9, 3, 10, 3, 10, 3, 10, 3, 10, 3, 10, 7, 10, 85, 10, 10, 12, 10,
-	14, 10, 88, 11, 10, 3, 10, 2, 2, 11, 2, 4, 6, 8, 10, 12, 14, 16, 18, 2,
-	2, 2, 90, 2, 20, 3, 2, 2, 2, 4, 26, 3, 2, 2, 2, 6, 31, 3, 2, 2, 2, 8, 42,
-	3, 2, 2, 2, 10, 56, 3, 2, 2, 2, 12, 60, 3, 2, 2, 2, 14, 65, 3, 2, 2, 2,
-	16, 67, 3, 2, 2, 2, 18, 86, 3, 2, 2, 2, 20, 22, 5, 4, 3, 2, 21, 23, 7,
-	15, 2, 2, 22, 21, 3, 2, 2, 2, 22, 23, 3, 2, 2, 2, 23, 24, 3, 2, 2, 2, 24,
-	25, 5, 6, 4, 2, 25, 3, 3, 2, 2, 2, 26, 27, 7, 3, 2, 2, 27, 28, 7, 4, 2,
-	2, 28, 29, 7, 16, 2, 2, 29, 30, 7, 5, 2, 2, 30, 5, 3, 2, 2, 2, 31, 38,
-	7, 6, 2, 2, 32, 34, 5, 16, 9, 2, 33, 32, 3, 2, 2, 2, 34, 35, 3, 2, 2, 2,
-	35, 33, 3, 2, 2, 2, 35, 36, 3, 2, 2, 2, 36, 39, 3, 2, 2, 2, 37, 39, 5,
-	18, 10, 2, 38, 33, 3, 2, 2, 2, 38, 37, 3, 2, 2, 2, 39, 40, 3, 2, 2, 2,
-	40, 41, 7, 7, 2, 2, 41, 7, 3, 2, 2, 2, 42, 48, 7, 8, 2, 2, 43, 44, 5, 14,
-	8, 2, 44, 45, 7, 9, 2, 2, 45, 47, 3, 2, 2, 2, 46, 43, 3, 2, 2, 2, 47, 50,
-	3, 2, 2, 2, 48, 46, 3, 2, 2, 2, 48, 49, 3, 2, 2, 2, 49, 52, 3, 2, 2, 2,
-	50, 48, 3, 2, 2, 2, 51, 53, 5, 14, 8, 2, 52, 51, 3, 2, 2, 2, 52, 53, 3,
-	2, 2, 2, 53, 54, 3, 2, 2, 2, 54, 55, 7, 10, 2, 2, 55, 9, 3, 2, 2, 2, 56,
-	58, 7, 16, 2, 2, 57, 59, 7, 15, 2, 2, 58, 57, 3, 2, 2, 2, 58, 59, 3, 2,
-	2, 2, 59, 11, 3, 2, 2, 2, 60, 61, 5, 10, 6, 2, 61, 13, 3, 2, 2, 2, 62,
-	66, 5, 8, 5, 2, 63, 66, 5, 6, 4, 2, 64, 66, 5, 10, 6, 2, 65, 62, 3, 2,
-	2, 2, 65, 63, 3, 2, 2, 2, 65, 64, 3, 2, 2, 2, 66, 15, 3, 2, 2, 2, 67, 73,
-	7, 13, 2, 2, 68, 69, 5, 12, 7, 2, 69, 70, 7, 11, 2, 2, 70, 71, 5, 14, 8,
-	2, 71, 72, 7, 12, 2, 2, 72, 74, 3, 2, 2, 2, 73, 68, 3, 2, 2, 2, 74, 75,
-	3, 2, 2, 2, 75, 73, 3, 2, 2, 2, 75, 76, 3, 2, 2, 2, 76, 77, 3, 2, 2, 2,
-	77, 78, 7, 14, 2, 2, 78, 17, 3, 2, 2, 2, 79, 80, 5, 12, 7, 2, 80, 81, 7,
-	11, 2, 2, 81, 82, 5, 14, 8, 2, 82, 83, 7, 12, 2, 2, 83, 85, 3, 2, 2, 2,
-	84, 79, 3, 2, 2, 2, 85, 88, 3, 2, 2, 2, 86, 84, 3, 2, 2, 2, 86, 87, 3,
-	2, 2, 2, 87, 19, 3, 2, 2, 2, 88, 86, 3, 2, 2, 2, 11, 22, 35, 38, 48, 52,
-	58, 65, 75, 86,
+	8, 9, 8, 3, 2, 3, 2, 5, 2, 19, 10, 2, 3, 2, 3, 2, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 3, 4, 3, 4, 5, 4, 30, 10, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 5,
+	4, 37, 10, 4, 7, 4, 39, 10, 4, 12, 4, 14, 4, 42, 11, 4, 3, 4, 3, 4, 3,
+	5, 3, 5, 3, 5, 3, 5, 7, 5, 50, 10, 5, 12, 5, 14, 5, 53, 11, 5, 3, 5, 5,
+	5, 56, 10, 5, 3, 5, 3, 5, 3, 6, 3, 6, 5, 6, 62, 10, 6, 3, 7, 3, 7, 3, 8,
+	3, 8, 3, 8, 5, 8, 69, 10, 8, 3, 8, 2, 2, 9, 2, 4, 6, 8, 10, 12, 14, 2,
+	2, 2, 72, 2, 16, 3, 2, 2, 2, 4, 22, 3, 2, 2, 2, 6, 27, 3, 2, 2, 2, 8, 45,
+	3, 2, 2, 2, 10, 59, 3, 2, 2, 2, 12, 63, 3, 2, 2, 2, 14, 68, 3, 2, 2, 2,
+	16, 18, 5, 4, 3, 2, 17, 19, 7, 13, 2, 2, 18, 17, 3, 2, 2, 2, 18, 19, 3,
+	2, 2, 2, 19, 20, 3, 2, 2, 2, 20, 21, 5, 6, 4, 2, 21, 3, 3, 2, 2, 2, 22,
+	23, 7, 3, 2, 2, 23, 24, 7, 4, 2, 2, 24, 25, 7, 14, 2, 2, 25, 26, 7, 5,
+	2, 2, 26, 5, 3, 2, 2, 2, 27, 40, 7, 6, 2, 2, 28, 30, 7, 13, 2, 2, 29, 28,
+	3, 2, 2, 2, 29, 30, 3, 2, 2, 2, 30, 31, 3, 2, 2, 2, 31, 32, 5, 12, 7, 2,
+	32, 33, 7, 7, 2, 2, 33, 34, 5, 14, 8, 2, 34, 36, 7, 8, 2, 2, 35, 37, 7,
+	13, 2, 2, 36, 35, 3, 2, 2, 2, 36, 37, 3, 2, 2, 2, 37, 39, 3, 2, 2, 2, 38,
+	29, 3, 2, 2, 2, 39, 42, 3, 2, 2, 2, 40, 38, 3, 2, 2, 2, 40, 41, 3, 2, 2,
+	2, 41, 43, 3, 2, 2, 2, 42, 40, 3, 2, 2, 2, 43, 44, 7, 9, 2, 2, 44, 7, 3,
+	2, 2, 2, 45, 51, 7, 10, 2, 2, 46, 47, 5, 14, 8, 2, 47, 48, 7, 11, 2, 2,
+	48, 50, 3, 2, 2, 2, 49, 46, 3, 2, 2, 2, 50, 53, 3, 2, 2, 2, 51, 49, 3,
+	2, 2, 2, 51, 52, 3, 2, 2, 2, 52, 55, 3, 2, 2, 2, 53, 51, 3, 2, 2, 2, 54,
+	56, 5, 14, 8, 2, 55, 54, 3, 2, 2, 2, 55, 56, 3, 2, 2, 2, 56, 57, 3, 2,
+	2, 2, 57, 58, 7, 12, 2, 2, 58, 9, 3, 2, 2, 2, 59, 61, 7, 14, 2, 2, 60,
+	62, 7, 13, 2, 2, 61, 60, 3, 2, 2, 2, 61, 62, 3, 2, 2, 2, 62, 11, 3, 2,
+	2, 2, 63, 64, 5, 10, 6, 2, 64, 13, 3, 2, 2, 2, 65, 69, 5, 8, 5, 2, 66,
+	69, 5, 6, 4, 2, 67, 69, 5, 10, 6, 2, 68, 65, 3, 2, 2, 2, 68, 66, 3, 2,
+	2, 2, 68, 67, 3, 2, 2, 2, 69, 15, 3, 2, 2, 2, 10, 18, 29, 36, 40, 51, 55,
+	61, 68,
 }
 var deserializer = antlr.NewATNDeserializer(nil)
 var deserializedATN = deserializer.DeserializeFromUInt16(parserATN)
 
 var literalNames = []string{
-	"", "'//'", "'!$*'", "'*$!'", "'{'", "'}'", "'('", "','", "')'", "'='",
-	"';'",
+	"", "'//'", "'!$*'", "'*$!'", "'{'", "'='", "';'", "'}'", "'('", "','",
+	"')'",
 }
 var symbolicNames = []string{
-	"", "", "", "", "", "", "", "", "", "", "", "SectionB", "SectionE", "Comment",
-	"NString", "WS",
+	"", "", "", "", "", "", "", "", "", "", "", "Comment", "NString", "WS",
 }
 
 var ruleNames = []string{
 	"project", "fileEncodeInfo", "valMap", "valArray", "valString", "key",
-	"value", "sectionName", "sectionNoName",
+	"value",
 }
 var decisionToDFA = make([]*antlr.DFA, len(deserializedATN.DecisionToState))
 
@@ -97,22 +89,20 @@ func NewPBXProjParser(input antlr.TokenStream) *PBXProjParser {
 
 // PBXProjParser tokens.
 const (
-	PBXProjParserEOF      = antlr.TokenEOF
-	PBXProjParserT__0     = 1
-	PBXProjParserT__1     = 2
-	PBXProjParserT__2     = 3
-	PBXProjParserT__3     = 4
-	PBXProjParserT__4     = 5
-	PBXProjParserT__5     = 6
-	PBXProjParserT__6     = 7
-	PBXProjParserT__7     = 8
-	PBXProjParserT__8     = 9
-	PBXProjParserT__9     = 10
-	PBXProjParserSectionB = 11
-	PBXProjParserSectionE = 12
-	PBXProjParserComment  = 13
-	PBXProjParserNString  = 14
-	PBXProjParserWS       = 15
+	PBXProjParserEOF     = antlr.TokenEOF
+	PBXProjParserT__0    = 1
+	PBXProjParserT__1    = 2
+	PBXProjParserT__2    = 3
+	PBXProjParserT__3    = 4
+	PBXProjParserT__4    = 5
+	PBXProjParserT__5    = 6
+	PBXProjParserT__6    = 7
+	PBXProjParserT__7    = 8
+	PBXProjParserT__8    = 9
+	PBXProjParserT__9    = 10
+	PBXProjParserComment = 11
+	PBXProjParserNString = 12
+	PBXProjParserWS      = 13
 )
 
 // PBXProjParser rules.
@@ -124,8 +114,6 @@ const (
 	PBXProjParserRULE_valString      = 4
 	PBXProjParserRULE_key            = 5
 	PBXProjParserRULE_value          = 6
-	PBXProjParserRULE_sectionName    = 7
-	PBXProjParserRULE_sectionNoName  = 8
 )
 
 // IProjectContext is an interface to support dynamic dispatch.
@@ -233,22 +221,22 @@ func (p *PBXProjParser) Project() (localctx IProjectContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(18)
+		p.SetState(14)
 		p.FileEncodeInfo()
 	}
-	p.SetState(20)
+	p.SetState(16)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 	if _la == PBXProjParserComment {
 		{
-			p.SetState(19)
+			p.SetState(15)
 			p.Match(PBXProjParserComment)
 		}
 
 	}
 	{
-		p.SetState(22)
+		p.SetState(18)
 		p.ValMap()
 	}
 
@@ -339,19 +327,19 @@ func (p *PBXProjParser) FileEncodeInfo() (localctx IFileEncodeInfoContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(24)
+		p.SetState(20)
 		p.Match(PBXProjParserT__0)
 	}
 	{
-		p.SetState(25)
+		p.SetState(21)
 		p.Match(PBXProjParserT__1)
 	}
 	{
-		p.SetState(26)
+		p.SetState(22)
 		p.Match(PBXProjParserNString)
 	}
 	{
-		p.SetState(27)
+		p.SetState(23)
 		p.Match(PBXProjParserT__2)
 	}
 
@@ -396,37 +384,58 @@ func NewValMapContext(parser antlr.Parser, parent antlr.ParserRuleContext, invok
 
 func (s *ValMapContext) GetParser() antlr.Parser { return s.parser }
 
-func (s *ValMapContext) SectionNoName() ISectionNoNameContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*ISectionNoNameContext)(nil)).Elem(), 0)
-
-	if t == nil {
-		return nil
-	}
-
-	return t.(ISectionNoNameContext)
-}
-
-func (s *ValMapContext) AllSectionName() []ISectionNameContext {
-	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*ISectionNameContext)(nil)).Elem())
-	var tst = make([]ISectionNameContext, len(ts))
+func (s *ValMapContext) AllKey() []IKeyContext {
+	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IKeyContext)(nil)).Elem())
+	var tst = make([]IKeyContext, len(ts))
 
 	for i, t := range ts {
 		if t != nil {
-			tst[i] = t.(ISectionNameContext)
+			tst[i] = t.(IKeyContext)
 		}
 	}
 
 	return tst
 }
 
-func (s *ValMapContext) SectionName(i int) ISectionNameContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*ISectionNameContext)(nil)).Elem(), i)
+func (s *ValMapContext) Key(i int) IKeyContext {
+	var t = s.GetTypedRuleContext(reflect.TypeOf((*IKeyContext)(nil)).Elem(), i)
 
 	if t == nil {
 		return nil
 	}
 
-	return t.(ISectionNameContext)
+	return t.(IKeyContext)
+}
+
+func (s *ValMapContext) AllValue() []IValueContext {
+	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IValueContext)(nil)).Elem())
+	var tst = make([]IValueContext, len(ts))
+
+	for i, t := range ts {
+		if t != nil {
+			tst[i] = t.(IValueContext)
+		}
+	}
+
+	return tst
+}
+
+func (s *ValMapContext) Value(i int) IValueContext {
+	var t = s.GetTypedRuleContext(reflect.TypeOf((*IValueContext)(nil)).Elem(), i)
+
+	if t == nil {
+		return nil
+	}
+
+	return t.(IValueContext)
+}
+
+func (s *ValMapContext) AllComment() []antlr.TerminalNode {
+	return s.GetTokens(PBXProjParserComment)
+}
+
+func (s *ValMapContext) Comment(i int) antlr.TerminalNode {
+	return s.GetToken(PBXProjParserComment, i)
 }
 
 func (s *ValMapContext) GetRuleContext() antlr.RuleContext {
@@ -472,41 +481,59 @@ func (p *PBXProjParser) ValMap() (localctx IValMapContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(29)
+		p.SetState(25)
 		p.Match(PBXProjParserT__3)
 	}
-	p.SetState(36)
+	p.SetState(38)
 	p.GetErrorHandler().Sync(p)
+	_la = p.GetTokenStream().LA(1)
 
-	switch p.GetTokenStream().LA(1) {
-	case PBXProjParserSectionB:
-		p.SetState(31)
+	for _la == PBXProjParserComment || _la == PBXProjParserNString {
+		p.SetState(27)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
 
-		for ok := true; ok; ok = _la == PBXProjParserSectionB {
+		if _la == PBXProjParserComment {
 			{
-				p.SetState(30)
-				p.SectionName()
+				p.SetState(26)
+				p.Match(PBXProjParserComment)
 			}
 
-			p.SetState(33)
-			p.GetErrorHandler().Sync(p)
-			_la = p.GetTokenStream().LA(1)
 		}
-
-	case PBXProjParserT__4, PBXProjParserNString:
 		{
-			p.SetState(35)
-			p.SectionNoName()
+			p.SetState(29)
+			p.Key()
+		}
+		{
+			p.SetState(30)
+			p.Match(PBXProjParserT__4)
+		}
+		{
+			p.SetState(31)
+			p.Value()
+		}
+		{
+			p.SetState(32)
+			p.Match(PBXProjParserT__5)
+		}
+		p.SetState(34)
+		p.GetErrorHandler().Sync(p)
+
+		if p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 2, p.GetParserRuleContext()) == 1 {
+			{
+				p.SetState(33)
+				p.Match(PBXProjParserComment)
+			}
+
 		}
 
-	default:
-		panic(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
+		p.SetState(40)
+		p.GetErrorHandler().Sync(p)
+		_la = p.GetTokenStream().LA(1)
 	}
 	{
-		p.SetState(38)
-		p.Match(PBXProjParserT__4)
+		p.SetState(41)
+		p.Match(PBXProjParserT__6)
 	}
 
 	return localctx
@@ -618,43 +645,43 @@ func (p *PBXProjParser) ValArray() (localctx IValArrayContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(40)
-		p.Match(PBXProjParserT__5)
+		p.SetState(43)
+		p.Match(PBXProjParserT__7)
 	}
-	p.SetState(46)
+	p.SetState(49)
 	p.GetErrorHandler().Sync(p)
-	_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 3, p.GetParserRuleContext())
+	_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 4, p.GetParserRuleContext())
 
 	for _alt != 2 && _alt != antlr.ATNInvalidAltNumber {
 		if _alt == 1 {
 			{
-				p.SetState(41)
+				p.SetState(44)
 				p.Value()
 			}
 			{
-				p.SetState(42)
-				p.Match(PBXProjParserT__6)
+				p.SetState(45)
+				p.Match(PBXProjParserT__8)
 			}
 
 		}
-		p.SetState(48)
+		p.SetState(51)
 		p.GetErrorHandler().Sync(p)
-		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 3, p.GetParserRuleContext())
+		_alt = p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 4, p.GetParserRuleContext())
 	}
-	p.SetState(50)
+	p.SetState(53)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	if ((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<PBXProjParserT__3)|(1<<PBXProjParserT__5)|(1<<PBXProjParserNString))) != 0 {
+	if ((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<PBXProjParserT__3)|(1<<PBXProjParserT__7)|(1<<PBXProjParserNString))) != 0 {
 		{
-			p.SetState(49)
+			p.SetState(52)
 			p.Value()
 		}
 
 	}
 	{
-		p.SetState(52)
-		p.Match(PBXProjParserT__7)
+		p.SetState(55)
+		p.Match(PBXProjParserT__9)
 	}
 
 	return localctx
@@ -749,16 +776,16 @@ func (p *PBXProjParser) ValString() (localctx IValStringContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(54)
+		p.SetState(57)
 		p.Match(PBXProjParserNString)
 	}
-	p.SetState(56)
+	p.SetState(59)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 	if _la == PBXProjParserComment {
 		{
-			p.SetState(55)
+			p.SetState(58)
 			p.Match(PBXProjParserComment)
 		}
 
@@ -857,7 +884,7 @@ func (p *PBXProjParser) Key() (localctx IKeyContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(58)
+		p.SetState(61)
 		p.ValString()
 	}
 
@@ -972,361 +999,33 @@ func (p *PBXProjParser) Value() (localctx IValueContext) {
 		}
 	}()
 
-	p.SetState(63)
+	p.SetState(66)
 	p.GetErrorHandler().Sync(p)
 
 	switch p.GetTokenStream().LA(1) {
-	case PBXProjParserT__5:
+	case PBXProjParserT__7:
 		p.EnterOuterAlt(localctx, 1)
 		{
-			p.SetState(60)
+			p.SetState(63)
 			p.ValArray()
 		}
 
 	case PBXProjParserT__3:
 		p.EnterOuterAlt(localctx, 2)
 		{
-			p.SetState(61)
+			p.SetState(64)
 			p.ValMap()
 		}
 
 	case PBXProjParserNString:
 		p.EnterOuterAlt(localctx, 3)
 		{
-			p.SetState(62)
+			p.SetState(65)
 			p.ValString()
 		}
 
 	default:
 		panic(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
-	}
-
-	return localctx
-}
-
-// ISectionNameContext is an interface to support dynamic dispatch.
-type ISectionNameContext interface {
-	antlr.ParserRuleContext
-
-	// GetParser returns the parser.
-	GetParser() antlr.Parser
-
-	// IsSectionNameContext differentiates from other interfaces.
-	IsSectionNameContext()
-}
-
-type SectionNameContext struct {
-	*antlr.BaseParserRuleContext
-	parser antlr.Parser
-}
-
-func NewEmptySectionNameContext() *SectionNameContext {
-	var p = new(SectionNameContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
-	p.RuleIndex = PBXProjParserRULE_sectionName
-	return p
-}
-
-func (*SectionNameContext) IsSectionNameContext() {}
-
-func NewSectionNameContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *SectionNameContext {
-	var p = new(SectionNameContext)
-
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
-
-	p.parser = parser
-	p.RuleIndex = PBXProjParserRULE_sectionName
-
-	return p
-}
-
-func (s *SectionNameContext) GetParser() antlr.Parser { return s.parser }
-
-func (s *SectionNameContext) SectionB() antlr.TerminalNode {
-	return s.GetToken(PBXProjParserSectionB, 0)
-}
-
-func (s *SectionNameContext) SectionE() antlr.TerminalNode {
-	return s.GetToken(PBXProjParserSectionE, 0)
-}
-
-func (s *SectionNameContext) AllKey() []IKeyContext {
-	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IKeyContext)(nil)).Elem())
-	var tst = make([]IKeyContext, len(ts))
-
-	for i, t := range ts {
-		if t != nil {
-			tst[i] = t.(IKeyContext)
-		}
-	}
-
-	return tst
-}
-
-func (s *SectionNameContext) Key(i int) IKeyContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IKeyContext)(nil)).Elem(), i)
-
-	if t == nil {
-		return nil
-	}
-
-	return t.(IKeyContext)
-}
-
-func (s *SectionNameContext) AllValue() []IValueContext {
-	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IValueContext)(nil)).Elem())
-	var tst = make([]IValueContext, len(ts))
-
-	for i, t := range ts {
-		if t != nil {
-			tst[i] = t.(IValueContext)
-		}
-	}
-
-	return tst
-}
-
-func (s *SectionNameContext) Value(i int) IValueContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IValueContext)(nil)).Elem(), i)
-
-	if t == nil {
-		return nil
-	}
-
-	return t.(IValueContext)
-}
-
-func (s *SectionNameContext) GetRuleContext() antlr.RuleContext {
-	return s
-}
-
-func (s *SectionNameContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
-	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *SectionNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(PBXProjListener); ok {
-		listenerT.EnterSectionName(s)
-	}
-}
-
-func (s *SectionNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(PBXProjListener); ok {
-		listenerT.ExitSectionName(s)
-	}
-}
-
-func (p *PBXProjParser) SectionName() (localctx ISectionNameContext) {
-	localctx = NewSectionNameContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 14, PBXProjParserRULE_sectionName)
-	var _la int
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
-	p.EnterOuterAlt(localctx, 1)
-	{
-		p.SetState(65)
-		p.Match(PBXProjParserSectionB)
-	}
-	p.SetState(71)
-	p.GetErrorHandler().Sync(p)
-	_la = p.GetTokenStream().LA(1)
-
-	for ok := true; ok; ok = _la == PBXProjParserNString {
-		{
-			p.SetState(66)
-			p.Key()
-		}
-		{
-			p.SetState(67)
-			p.Match(PBXProjParserT__8)
-		}
-		{
-			p.SetState(68)
-			p.Value()
-		}
-		{
-			p.SetState(69)
-			p.Match(PBXProjParserT__9)
-		}
-
-		p.SetState(73)
-		p.GetErrorHandler().Sync(p)
-		_la = p.GetTokenStream().LA(1)
-	}
-	{
-		p.SetState(75)
-		p.Match(PBXProjParserSectionE)
-	}
-
-	return localctx
-}
-
-// ISectionNoNameContext is an interface to support dynamic dispatch.
-type ISectionNoNameContext interface {
-	antlr.ParserRuleContext
-
-	// GetParser returns the parser.
-	GetParser() antlr.Parser
-
-	// IsSectionNoNameContext differentiates from other interfaces.
-	IsSectionNoNameContext()
-}
-
-type SectionNoNameContext struct {
-	*antlr.BaseParserRuleContext
-	parser antlr.Parser
-}
-
-func NewEmptySectionNoNameContext() *SectionNoNameContext {
-	var p = new(SectionNoNameContext)
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(nil, -1)
-	p.RuleIndex = PBXProjParserRULE_sectionNoName
-	return p
-}
-
-func (*SectionNoNameContext) IsSectionNoNameContext() {}
-
-func NewSectionNoNameContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *SectionNoNameContext {
-	var p = new(SectionNoNameContext)
-
-	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
-
-	p.parser = parser
-	p.RuleIndex = PBXProjParserRULE_sectionNoName
-
-	return p
-}
-
-func (s *SectionNoNameContext) GetParser() antlr.Parser { return s.parser }
-
-func (s *SectionNoNameContext) AllKey() []IKeyContext {
-	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IKeyContext)(nil)).Elem())
-	var tst = make([]IKeyContext, len(ts))
-
-	for i, t := range ts {
-		if t != nil {
-			tst[i] = t.(IKeyContext)
-		}
-	}
-
-	return tst
-}
-
-func (s *SectionNoNameContext) Key(i int) IKeyContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IKeyContext)(nil)).Elem(), i)
-
-	if t == nil {
-		return nil
-	}
-
-	return t.(IKeyContext)
-}
-
-func (s *SectionNoNameContext) AllValue() []IValueContext {
-	var ts = s.GetTypedRuleContexts(reflect.TypeOf((*IValueContext)(nil)).Elem())
-	var tst = make([]IValueContext, len(ts))
-
-	for i, t := range ts {
-		if t != nil {
-			tst[i] = t.(IValueContext)
-		}
-	}
-
-	return tst
-}
-
-func (s *SectionNoNameContext) Value(i int) IValueContext {
-	var t = s.GetTypedRuleContext(reflect.TypeOf((*IValueContext)(nil)).Elem(), i)
-
-	if t == nil {
-		return nil
-	}
-
-	return t.(IValueContext)
-}
-
-func (s *SectionNoNameContext) GetRuleContext() antlr.RuleContext {
-	return s
-}
-
-func (s *SectionNoNameContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
-	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *SectionNoNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(PBXProjListener); ok {
-		listenerT.EnterSectionNoName(s)
-	}
-}
-
-func (s *SectionNoNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(PBXProjListener); ok {
-		listenerT.ExitSectionNoName(s)
-	}
-}
-
-func (p *PBXProjParser) SectionNoName() (localctx ISectionNoNameContext) {
-	localctx = NewSectionNoNameContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 16, PBXProjParserRULE_sectionNoName)
-	var _la int
-
-	defer func() {
-		p.ExitRule()
-	}()
-
-	defer func() {
-		if err := recover(); err != nil {
-			if v, ok := err.(antlr.RecognitionException); ok {
-				localctx.SetException(v)
-				p.GetErrorHandler().ReportError(p, v)
-				p.GetErrorHandler().Recover(p, v)
-			} else {
-				panic(err)
-			}
-		}
-	}()
-
-	p.EnterOuterAlt(localctx, 1)
-	p.SetState(84)
-	p.GetErrorHandler().Sync(p)
-	_la = p.GetTokenStream().LA(1)
-
-	for _la == PBXProjParserNString {
-		{
-			p.SetState(77)
-			p.Key()
-		}
-		{
-			p.SetState(78)
-			p.Match(PBXProjParserT__8)
-		}
-		{
-			p.SetState(79)
-			p.Value()
-		}
-		{
-			p.SetState(80)
-			p.Match(PBXProjParserT__9)
-		}
-
-		p.SetState(86)
-		p.GetErrorHandler().Sync(p)
-		_la = p.GetTokenStream().LA(1)
 	}
 
 	return localctx

@@ -6,7 +6,7 @@ project: fileEncodeInfo Comment? valMap;
 
 fileEncodeInfo: '//' '!$*' NString '*$!';
 
-valMap: '{' ((sectionName)+ | sectionNoName) '}';
+valMap: '{' (Comment? key '=' value ';' Comment?)* '}';
 valArray: '(' (value ',')* value? ')';
 valString: NString Comment?;
 
@@ -16,15 +16,8 @@ value: valArray
     | valString
     ;
 
-sectionName: SectionB
-        (key '=' value ';')+
-        SectionE;
-sectionNoName: (key '=' value ';')*;
-
 // LEXER
 
-SectionB: '/* Begin' .*? 'section */';
-SectionE: '/* End' .*? 'section */';
 Comment: '/*' .*? '*/';
 NString: String1 | String2;
 

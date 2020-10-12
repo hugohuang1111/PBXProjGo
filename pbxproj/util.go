@@ -2,39 +2,7 @@ package pbxproj
 
 import (
 	"os"
-	"strings"
-
-	"github.com/google/uuid"
 )
-
-func isUUID(s string) bool {
-	if 24 != len(s) {
-		return false
-	}
-	match := false
-	for _, c := range s {
-		if (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') {
-			match = true
-		} else {
-			match = false
-		}
-
-		if !match {
-			return false
-		}
-	}
-
-	return true
-}
-
-func genUUID() string {
-	u1 := uuid.New()
-	s := u1.String()
-
-	s = strings.Replace(s, "-", "", -1)
-
-	return strings.ToUpper(s[0:24])
-}
 
 func fileIsExist(filePath string) bool {
 	var exist = true
@@ -42,4 +10,18 @@ func fileIsExist(filePath string) bool {
 		exist = false
 	}
 	return exist
+}
+
+func isStringNeedQuote(s string) bool {
+	if 0 == len(s) {
+		return true
+	}
+	for _, c := range s {
+		if c == ' ' || c == '-' || c == '?' || c == '+' || c == '@' || c == '$' || c == ',' || c == '=' ||
+			c == '[' || c == ']' || c == '{' || c == '}' || c == '<' || c == '>' || c == '(' || c == ')' {
+			return true
+		}
+	}
+
+	return false
 }

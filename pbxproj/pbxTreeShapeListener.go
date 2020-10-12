@@ -9,7 +9,7 @@ import (
 
 type pbxTreeShapeListener struct {
 	*parser.BasePBXProjListener
-	pbxTree *PBXProject
+	pbxProject *PBXProject
 
 	tStack *stack
 }
@@ -17,14 +17,14 @@ type pbxTreeShapeListener struct {
 // NewPBXTreeShapeListener new pbx tree shape listener
 func newPBXTreeShapeListener(pbxTree *PBXProject) *pbxTreeShapeListener {
 	l := new(pbxTreeShapeListener)
-	l.pbxTree = pbxTree
+	l.pbxProject = pbxTree
 	l.tStack = newStack()
 
 	return l
 }
 
 func (tsl *pbxTreeShapeListener) EnterEveryRule(rule antlr.ParserRuleContext) {
-	pbxTree := tsl.pbxTree
+	pbxTree := tsl.pbxProject
 	tStack := tsl.tStack
 	switch rule.(type) {
 	case *parser.ProjectContext:
@@ -36,27 +36,27 @@ func (tsl *pbxTreeShapeListener) EnterEveryRule(rule antlr.ParserRuleContext) {
 				pbxTree.fileEncode = token.GetText()
 			}
 		}
-	case *parser.SectionNameContext:
-		{
-			rSection := rule.(*parser.SectionNameContext)
-			t := rSection.GetToken(parser.PBXProjParserSectionB, 0)
-			sec := newMapSection()
-			if nil != t {
-				str := t.GetText()
-				sum := len(str)
-				sec.name = str[9 : sum-11]
-			}
-			tStack.push(sec)
-		}
-	case *parser.SectionNoNameContext:
-		{
-			tStack.push(newMapSection())
-		}
+	// case *parser.SectionNameContext:
+	// 	{
+	// 		rSection := rule.(*parser.SectionNameContext)
+	// 		t := rSection.GetToken(parser.PBXProjParserSectionB, 0)
+	// 		sec := newMapSection()
+	// 		if nil != t {
+	// 			str := t.GetText()
+	// 			sum := len(str)
+	// 			sec.name = str[9 : sum-11]
+	// 		}
+	// 		tStack.push(sec)
+	// 	}
+	// case *parser.SectionNoNameContext:
+	// 	{
+	// 		tStack.push(newMapSection())
+	// 	}
 	case *parser.KeyContext:
 	case *parser.ValueContext:
 	case *parser.ValMapContext:
 		{
-			tStack.push(make(pbxMap, 0))
+			tStack.push(make(pbxMap))
 		}
 	case *parser.ValArrayContext:
 		{
@@ -67,6 +67,9 @@ func (tsl *pbxTreeShapeListener) EnterEveryRule(rule antlr.ParserRuleContext) {
 			rString := rule.(*parser.ValStringContext)
 			t := rString.GetToken(parser.PBXProjParserNString, 0)
 			s := t.GetText()
+			if '"' == s[0] && '"' == s[len(s)-1] {
+				s = s[1 : len(s)-1]
+			}
 			tStack.push(s)
 
 			t = rString.GetToken(parser.PBXProjParserComment, 0)
@@ -79,7 +82,7 @@ func (tsl *pbxTreeShapeListener) EnterEveryRule(rule antlr.ParserRuleContext) {
 }
 
 func (tsl *pbxTreeShapeListener) ExitEveryRule(rule antlr.ParserRuleContext) {
-	pbxTree := tsl.pbxTree
+	pbxTree := tsl.pbxProject
 	tStack := tsl.tStack
 	switch rule.(type) {
 	case *parser.ProjectContext:
@@ -90,17 +93,17 @@ func (tsl *pbxTreeShapeListener) ExitEveryRule(rule antlr.ParserRuleContext) {
 			pbxTree.project = tStack.pop().(pbxMap)
 		}
 	case *parser.FileEncodeInfoContext:
-	case *parser.SectionNameContext,
-		*parser.SectionNoNameContext:
-		{
-			// fmt.Println(">>> Exit section")
-			val := tStack.pop().(pbxMapSection)
-			pMap := tStack.pop().(pbxMap)
-			pMap = append(pMap, val)
-			tStack.push(pMap)
-			// tStack.dump()
-			break
-		}
+	// case *parser.SectionNameContext,
+	// 	*parser.SectionNoNameContext:
+	// 	{
+	// 		// fmt.Println(">>> Exit section")
+	// 		val := tStack.pop().(pbxMapSection)
+	// 		pMap := tStack.pop().(pbxMap)
+	// 		pMap = append(pMap, val)
+	// 		tStack.push(pMap)
+	// 		// tStack.dump()
+	// 		break
+	// 	}
 	case *parser.KeyContext:
 	case *parser.ValueContext:
 		{
@@ -109,8 +112,8 @@ func (tsl *pbxTreeShapeListener) ExitEveryRule(rule antlr.ParserRuleContext) {
 			val1 := tStack.pop()
 			val2 := tStack.pop()
 			if key, ok := val2.(string); ok {
-				valMapSection := tStack.top().(pbxMapSection)
-				valMapSection.value[key] = val1
+				valMap := tStack.top().(pbxMap)
+				valMap[key] = val1
 			} else {
 				arr := val2.([]interface{})
 				arr = append(arr, val1)

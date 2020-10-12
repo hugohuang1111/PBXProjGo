@@ -2,6 +2,7 @@ package pbxproj
 
 import (
 	"path"
+	"strconv"
 )
 
 const (
@@ -18,20 +19,13 @@ var PATH_BY_FILETYPE map[string]string
 var SOURCETREE_BY_FILETYPE map[string]string
 var ENCODING_BY_FILETYPE map[string]int
 
-type pbxFileReference struct {
-	isa               string
-	lastKnownFileType string
-	name              string
-	path              string
-	sourceTree        string
-}
-
 func init() {
 	FILETYPE_BY_EXTENSION = map[string]string{
 		"a":           "archive.ar",
 		"app":         "wrapper.application",
 		"appex":       "wrapper.app-extension",
 		"bundle":      "wrapper.plug-in",
+		"cpp":         "sourcecode.cpp.cpp",
 		"dylib":       "compiled.mach-o.dylib",
 		"framework":   "wrapper.framework",
 		"h":           "sourcecode.c.h",
@@ -61,6 +55,7 @@ func init() {
 		"embedded.framework":                     "Embed Frameworks",
 		"sourcecode.c.h":                         "Resources",
 		"sourcecode.c.objc":                      "Sources",
+		"sourcecode.cpp.cpp":                     "Sources",
 		"sourcecode.swift":                       "Sources",
 	}
 
@@ -79,6 +74,7 @@ func init() {
 	ENCODING_BY_FILETYPE = map[string]int{
 		"sourcecode.c.h":     4,
 		"sourcecode.c.objc":  4,
+		"sourcecode.cpp.cpp": 4,
 		"sourcecode.swift":   4,
 		"text":               4,
 		"text.plist.xml":     4,
@@ -87,10 +83,6 @@ func init() {
 		"text.plist.strings": 4,
 	}
 }
-
-// func unquoted(text string) {
-// 	return text == null ? '' : text.replace (/(^")|("$)/g, '')
-// }
 
 func detectType(filePath string) string {
 	ext := path.Ext(filePath)
@@ -104,111 +96,30 @@ func detectType(filePath string) string {
 	return DEFAULT_FILETYPE
 }
 
-// func defaultExtension(fileRef) {
-// var filetype = fileRef.lastKnownFileType && fileRef.lastKnownFileType != DEFAULT_FILETYPE ?
-// 	fileRef.lastKnownFileType : fileRef.explicitFileType;
-
-// for(var extension in FILETYPE_BY_EXTENSION) {
-// 	if(FILETYPE_BY_EXTENSION.hasOwnProperty(unquoted(extension)) ) {
-// 		 if(FILETYPE_BY_EXTENSION[unquoted(extension)] === unquoted(filetype) )
-// 			 return extension;
-// 	}
-// }
-// }
-
-// function defaultEncoding(fileRef) {
-// var filetype = fileRef.lastKnownFileType || fileRef.explicitFileType,
-// 	encoding = ENCODING_BY_FILETYPE[unquoted(filetype)];
-
-// if (encoding) {
-// 	return encoding;
-// }
-// }
-
-// function detectGroup(fileRef, opt) {
-// var extension = path.extname(fileRef.basename).substring(1),
-// 	filetype = fileRef.lastKnownFileType || fileRef.explicitFileType,
-// 	groupName = GROUP_BY_FILETYPE[unquoted(filetype)];
-
-// if (extension === 'xcdatamodeld') {
-// 	return 'Sources';
-// }
-
-// if (opt.customFramework && opt.embed) {
-// 	return GROUP_BY_FILETYPE['embedded.framework'];
-// }
-
-// if (!groupName) {
-// 	return DEFAULT_GROUP;
-// }
-
-// return groupName;
-// }
-
-func detectSourcetree(fileRef pbxFileReference) string {
-	filetype := fileRef.lastKnownFileType
-	sourcetree, exist := SOURCETREE_BY_FILETYPE[filetype]
-
-	if !exist {
-		return DEFAULT_SOURCETREE
+func detectGroup(fr pbxMap) string {
+	filetype := fr["lastKnownFileType"].(string)
+	if group, ok := GROUP_BY_FILETYPE[filetype]; ok {
+		return group
 	}
 
-	return sourcetree
+	return DEFAULT_GROUP
 }
-
-// function defaultPath(fileRef, filePath) {
-// var filetype = fileRef.lastKnownFileType || fileRef.explicitFileType,
-// 	defaultPath = PATH_BY_FILETYPE[unquoted(filetype)];
-
-// if (fileRef.customFramework) {
-// 	return filePath;
-// }
-
-// if (defaultPath) {
-// 	return path.join(defaultPath, path.basename(filePath));
-// }
-
-// return filePath;
-// }
-
-// function defaultGroup(fileRef) {
-// var groupName = GROUP_BY_FILETYPE[fileRef.lastKnownFileType];
-
-// if (!groupName) {
-// 	return DEFAULT_GROUP;
-// }
-
-// return defaultGroup;
-// }
-
-// func newPBXFileRef(filePath string) pbxFileReference {
-// 	var fileRef pbxFileReference
-
-// 	fileRef.isa = "PBXFileReference"
-// 	fileRef.lastKnownFileType = detectType(filePath)
-// 	fileRef.name = path.Base(filePath)
-// 	fileRef.path = filePath
-// 	fileRef.sourceTree = detectSourcetree(fileRef)
-
-// 	return fileRef
-// }
 
 func newPBXFileRef(filePath string) pbxMap {
 	m := make(pbxMap, 0)
-	s := pbxMapSection{}
-	s.value = make(map[string]interface{})
-	s.value["isa"] = "PBXFileReference"
+	m["isa"] = "PBXFileReference"
 	filetype := detectType(filePath)
-	s.value["lastKnownFileType"] = filetype
-	s.value["name"] = path.Base(filePath)
-	s.value["path"] = filePath
-	if sourcetree, exist := SOURCETREE_BY_FILETYPE[filetype]; exist {
-		s.value["sourceTree"] = sourcetree
-	} else {
-		s.value["sourceTree"] = DEFAULT_SOURCETREE
+	m["lastKnownFileType"] = filetype
+	m["name"] = path.Base(filePath)
+	m["path"] = filePath
+	if v, ok := ENCODING_BY_FILETYPE[filetype]; ok {
+		m["fileEncoding"] = strconv.Itoa(v)
 	}
-
-	m = append(m, s)
+	if sourcetree, exist := SOURCETREE_BY_FILETYPE[filetype]; exist {
+		m["sourceTree"] = sourcetree
+	} else {
+		m["sourceTree"] = DEFAULT_SOURCETREE
+	}
 
 	return m
 }

@@ -62,15 +62,3 @@ func (s *BasePBXProjListener) EnterValue(ctx *ValueContext) {}
 
 // ExitValue is called when production value is exited.
 func (s *BasePBXProjListener) ExitValue(ctx *ValueContext) {}
-
-// EnterSectionName is called when production sectionName is entered.
-func (s *BasePBXProjListener) EnterSectionName(ctx *SectionNameContext) {}
-
-// ExitSectionName is called when production sectionName is exited.
-func (s *BasePBXProjListener) ExitSectionName(ctx *SectionNameContext) {}
-
-// EnterSectionNoName is called when production sectionNoName is entered.
-func (s *BasePBXProjListener) EnterSectionNoName(ctx *SectionNoNameContext) {}
-
-// ExitSectionNoName is called when production sectionNoName is exited.
-func (s *BasePBXProjListener) ExitSectionNoName(ctx *SectionNoNameContext) {}
