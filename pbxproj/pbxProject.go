@@ -6,53 +6,6 @@ import (
 	"strings"
 )
 
-// GetTargets return tagrets name
-func (pbx PBXProject) GetTargets() []string {
-	targets := make([]string, 0)
-	objMap := pbx.project["objects"].(pbxMap)
-	var project pbxMap
-	for _, value := range objMap {
-		valMap := value.(pbxMap)
-		if 0 == strings.Compare(valMap["isa"].(string), "PBXProject") {
-			project = valMap
-		}
-	}
-
-	if nil == project {
-		return targets
-	}
-
-	for _, vTID := range project["targets"].([]interface{}) {
-		tid := vTID.(string)
-		valMap := objMap[tid].(pbxMap)
-		targets = append(targets, valMap["name"].(string))
-	}
-
-	return targets
-}
-
-func (pbx PBXProject) AddFile(target string, group string, file string) {
-	pbx.addFile(target, group, file)
-}
-
-func (pbx PBXProject) AddFramework(target string, file string) {
-	pbx.addFile(target, "", file)
-}
-
-func (pbx PBXProject) AddResource(target string, file string) {
-	pbx.addFile(target, "", file)
-}
-
-func (pbx PBXProject) GetBuildSetting(target string, mode string, key string) interface{} {
-	bsMap := pbx.getBuildSetting(target, mode)
-	return bsMap[key]
-}
-
-func (pbx PBXProject) SetBuildSetting(target string, mode string, key string, val interface{}) {
-	bsMap := pbx.getBuildSetting(target, mode)
-	bsMap[key] = val
-}
-
 func (pbx PBXProject) addFile(target string, group string, file string) {
 	frMap := newPBXFileRef(file)
 	dGroup := detectGroup(frMap)
