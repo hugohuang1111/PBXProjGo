@@ -8,6 +8,11 @@ import (
 )
 
 func (pbx PBXProject) addFile(target string, group string, file string) {
+	absFilePath := changePathToAbs(file)
+	if !isFileExist(absFilePath) {
+		fmt.Println("file not exist")
+		return
+	}
 	frMap := newPBXFileRef(file)
 	ftype := frMap["lastKnownFileType"].(string)
 	dGroup := detectGroup(frMap)
@@ -18,6 +23,7 @@ func (pbx PBXProject) addFile(target string, group string, file string) {
 	groupID, _ := pbx.addToGroup(group, frid)
 
 	groupPath := pbx.getGroupAbsPath(groupID)
+	fmt.Println(groupID)
 	fmt.Println(groupPath)
 
 	var bpMap pbxMap
@@ -191,7 +197,7 @@ func (pbx PBXProject) getOrCreateGroup(group string) (string, pbxMap) {
 	}
 
 	projMap := pbx.getProject()
-	rootGroupID := projMap["mainGroup"].(string)
+	rootGroupID := projMap.getValueString("mainGroup")
 	gs := strings.Split(group, "/")
 	rootGroup := objMap[rootGroupID].(pbxMap)
 
@@ -218,7 +224,7 @@ func (pbx PBXProject) getOrCreateGroup(group string) (string, pbxMap) {
 			m["isa"] = "PBXGroup"
 			m["name"] = path.Base(gname)
 			m["sourceTree"] = DEFAULT_SOURCETREE
-			if fileIsExist(filepath.Join(curDir, gname)) {
+			if isFileExist(filepath.Join(curDir, gname)) {
 				m["path"] = gname
 			}
 
@@ -226,6 +232,8 @@ func (pbx PBXProject) getOrCreateGroup(group string) (string, pbxMap) {
 			groupMap["children"] = append(groupMap["children"].([]interface{}), curGroupID)
 
 			pbx.uuidMap[curGroupID] = fmt.Sprintf("/* %v */", m["name"])
+
+			groupMap = m
 		}
 	}
 

@@ -2,9 +2,10 @@ package pbxproj
 
 import (
 	"os"
+	"path/filepath"
 )
 
-func fileIsExist(filePath string) bool {
+func isFileExist(filePath string) bool {
 	var exist = true
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		exist = false
@@ -34,4 +35,20 @@ func isContain(arr []string, item string) bool {
 	}
 
 	return false
+}
+
+func getExecutePath() string {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if nil != err {
+		return ""
+	}
+	return dir
+}
+
+func changePathToAbs(path string) string {
+	if filepath.IsAbs(path) {
+		return path
+	}
+	dir := getExecutePath()
+	return filepath.Join(dir, path)
 }
