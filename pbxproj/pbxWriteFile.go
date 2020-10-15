@@ -34,11 +34,7 @@ func (f pbxWriteFile) writeObjectsMap(m pbxMap) {
 	f.writeString("{")
 	f.writeNewline()
 
-	sections := []string{
-		"PBXBuildFile", "PBXContainerItemProxy", "PBXFileReference",
-		"PBXFrameworksBuildPhase", "PBXGroup", "PBXNativeTarget",
-		"PBXProject", "PBXReferenceProxy", "PBXResourcesBuildPhase",
-		"PBXSourcesBuildPhase", "XCBuildConfiguration", "XCConfigurationList"}
+	sections := getSectionNames(m)
 
 	f.level++
 

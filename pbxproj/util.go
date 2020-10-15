@@ -25,3 +25,13 @@ func isStringNeedQuote(s string) bool {
 
 	return false
 }
+
+func isContain(arr []string, item string) bool {
+	for _, eachItem := range arr {
+		if eachItem == item {
+			return true
+		}
+	}
+
+	return false
+}

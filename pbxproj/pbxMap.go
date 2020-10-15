@@ -1,6 +1,9 @@
 package pbxproj
 
-import "strings"
+import (
+	"sort"
+	"strings"
+)
 
 type pbxMap map[string]interface{}
 
@@ -40,6 +43,28 @@ func (m pbxMap) getValueMap(keys ...string) pbxMap {
 		return nil
 	}
 	return v.(pbxMap)
+}
+
+/*
+ * Map Section related
+ */
+
+func getSectionNames(m pbxMap) []string {
+	sections := make([]string, 0)
+
+	for _, val := range m {
+		m := val.(pbxMap)
+		if valISA, ok := m["isa"]; ok {
+			valStr := valISA.(string)
+			if !isContain(sections, valStr) {
+				sections = append(sections, valStr)
+			}
+		}
+	}
+
+	sort.Strings(sections)
+
+	return sections
 }
 
 /*
