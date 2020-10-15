@@ -25,9 +25,11 @@ func main() {
 	pbxProject.AddFramework("admob iOS", "./project/a.framework")
 
 	val := pbxProject.GetBuildSetting("admob iOS", "Debug", "OTHER_LDFLAGS")
-	lfs := val.([]interface{})
-	lfs = append(lfs, "kk-kk")
-	pbxProject.SetBuildSetting("admob iOS", "Debug", "OTHER_LDFLAGS", lfs)
+	if nil != val {
+		lfs := val.([]interface{})
+		lfs = append(lfs, "kk-kk")
+		pbxProject.SetBuildSetting("admob iOS", "Debug", "OTHER_LDFLAGS", lfs)
+	}
 
 	// uuid := pbxProject.FindGroupUUID("ios")
 	// uuid := pbxProject.AddFile("ios", "./projects/AppDelegate.h")

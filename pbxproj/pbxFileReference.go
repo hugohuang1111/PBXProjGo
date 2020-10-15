@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	DEFAULT_SOURCETREE         = "\"<group>\""
+	DEFAULT_SOURCETREE         = "<group>"
 	DEFAULT_PRODUCT_SOURCETREE = "BUILT_PRODUCTS_DIR"
 	DEFAULT_FILEENCODING       = 4
 	DEFAULT_GROUP              = "Resources"
@@ -32,6 +32,7 @@ func init() {
 		"m":           "sourcecode.c.objc",
 		"markdown":    "text",
 		"mdimporter":  "wrapper.cfbundle",
+		"mm":          "sourcecode.c.objc",
 		"octest":      "wrapper.cfbundle",
 		"pch":         "sourcecode.c.h",
 		"plist":       "text.plist.xml",

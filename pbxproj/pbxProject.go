@@ -3,17 +3,22 @@ package pbxproj
 import (
 	"fmt"
 	"path"
+	"path/filepath"
 	"strings"
 )
 
 func (pbx PBXProject) addFile(target string, group string, file string) {
 	frMap := newPBXFileRef(file)
+	ftype := frMap["lastKnownFileType"].(string)
 	dGroup := detectGroup(frMap)
 	if 0 == len(group) {
 		group = dGroup
 	}
 	frid := pbx.addFileReference(frMap)
-	pbx.addToGroup(group, frid)
+	groupID, _ := pbx.addToGroup(group, frid)
+
+	groupPath := pbx.getGroupAbsPath(groupID)
+	fmt.Println(groupPath)
 
 	var bpMap pbxMap
 	switch dGroup {
@@ -38,7 +43,11 @@ func (pbx PBXProject) addFile(target string, group string, file string) {
 		} else {
 			val = make([]interface{}, 0)
 		}
-		val = append(val, pbx.addBuildFile(frid))
+		if 0 == strings.Compare(ftype, "sourcecode.c.h") {
+			val = append(val, frid)
+		} else {
+			val = append(val, pbx.addBuildFile(frid))
+		}
 		bpMap["files"] = val
 	}
 }
@@ -158,7 +167,7 @@ func (pbx PBXProject) addFileReference(frMap pbxMap) string {
 	return key
 }
 
-func (pbx PBXProject) addToGroup(group string, frid string) string {
+func (pbx PBXProject) addToGroup(group string, frid string) (string, pbxMap) {
 	gid, grpMap := pbx.getOrCreateGroup(group)
 	valChildren := grpMap["children"]
 	var children []interface{}
@@ -170,7 +179,7 @@ func (pbx PBXProject) addToGroup(group string, frid string) string {
 	children = append(children, frid)
 	grpMap["children"] = children
 
-	return gid
+	return gid, grpMap
 }
 
 func (pbx PBXProject) getOrCreateGroup(group string) (string, pbxMap) {
@@ -181,31 +190,70 @@ func (pbx PBXProject) getOrCreateGroup(group string) (string, pbxMap) {
 		return group, val.(pbxMap)
 	}
 
-	// try group as name
-	for key, value := range objMap {
-		valMap := value.(pbxMap)
-		if 0 == strings.Compare(valMap["isa"].(string), "PBXGroup") &&
-			0 == strings.Compare(valMap["name"].(string), group) {
-			return key, valMap
+	projMap := pbx.getProject()
+	rootGroupID := projMap["mainGroup"].(string)
+	gs := strings.Split(group, "/")
+	rootGroup := objMap[rootGroupID].(pbxMap)
+
+	groupMap := rootGroup
+	curDir := pbx.projectDir
+	var curGroupID string
+	for _, gname := range gs {
+		find := false
+		if path, ok := groupMap["path"]; ok {
+			curDir = filepath.Join(curDir, path.(string))
+		}
+		for _, val := range groupMap["children"].([]interface{}) {
+			gid := val.(string)
+			if 0 == strings.Compare(gid, gname) {
+				find = true
+				groupMap = objMap[gid].(pbxMap)
+				break
+			}
+		}
+		if !find {
+			curGroupID = genUUID()
+			m := make(pbxMap)
+			m = make(map[string]interface{})
+			m["isa"] = "PBXGroup"
+			m["name"] = path.Base(gname)
+			m["sourceTree"] = DEFAULT_SOURCETREE
+			if fileIsExist(filepath.Join(curDir, gname)) {
+				m["path"] = gname
+			}
+
+			objMap[curGroupID] = m
+			groupMap["children"] = append(groupMap["children"].([]interface{}), curGroupID)
+
+			pbx.uuidMap[curGroupID] = fmt.Sprintf("/* %v */", m["name"])
 		}
 	}
 
-	// create group
-	key := genUUID()
-	m := make(pbxMap)
-	m = make(map[string]interface{})
-	m["isa"] = "PBXGroup"
-	m["name"] = path.Base(group)
-	if fileIsExist(group) {
-		m["path"] = group
-	}
-	m["sourceTree"] = DEFAULT_SOURCETREE
+	// // try group as name
+	// for key, value := range objMap {
+	// 	valMap := value.(pbxMap)
+	// 	if 0 == strings.Compare(valMap["isa"].(string), "PBXGroup") &&
+	// 		0 == strings.Compare(valMap["name"].(string), group) {
+	// 		return key, valMap
+	// 	}
+	// }
 
-	objMap[key] = m
+	// // create group
+	// key := genUUID()
+	// m := make(pbxMap)
+	// m = make(map[string]interface{})
+	// m["isa"] = "PBXGroup"
+	// m["name"] = path.Base(group)
+	// if fileIsExist(group) {
+	// 	m["path"] = group
+	// }
+	// m["sourceTree"] = DEFAULT_SOURCETREE
 
-	pbx.uuidMap[key] = fmt.Sprintf("/* %v */", m["name"])
+	// objMap[key] = m
 
-	return key, m
+	// pbx.uuidMap[key] = fmt.Sprintf("/* %v */", m["name"])
+
+	return curGroupID, groupMap
 }
 
 func (pbx PBXProject) addBuildFile(frid string) string {
@@ -227,8 +275,11 @@ func (pbx PBXProject) getBuildSetting(target string, mode string) pbxMap {
 	objMap := pbx.project["objects"].(pbxMap)
 
 	_, targetMap := pbx.getNativeTarget(target)
-	bcl := targetMap["buildConfigurationList"].(string)
-	bclMap := objMap[bcl].(pbxMap)
+	if nil == targetMap {
+		return nil
+	}
+	bcl := targetMap.getValueString("buildConfigurationList")
+	bclMap := objMap.getValueMap(bcl)
 	for _, v := range bclMap["buildConfigurations"].([]interface{}) {
 		bcid := v.(string)
 		if valBC, ok := objMap[bcid]; ok {
@@ -240,4 +291,35 @@ func (pbx PBXProject) getBuildSetting(target string, mode string) pbxMap {
 	}
 
 	return nil
+}
+
+func (pbx PBXProject) getGroupAbsPath(gid string) string {
+	objMap := pbx.project["objects"].(pbxMap)
+
+	var curGid string = gid
+	parts := make([]string, 0)
+	groupMap := objMap[curGid].(pbxMap)
+	parts = append(parts, pbxGroupPath(groupMap))
+	if !pbxGroupSourceTreeMatch(groupMap, "<absolute>") {
+		for key, value := range objMap {
+			valMap := value.(pbxMap)
+			if 0 == strings.Compare(valMap["isa"].(string), "PBXGroup") {
+				if pbxGroupIncludeChild(valMap, gid) {
+					curGid = key
+					groupMap = objMap[curGid].(pbxMap)
+					parts = append(parts, pbxGroupPath(groupMap))
+					if pbxGroupSourceTreeMatch(groupMap, "<absolute>") {
+						break
+					}
+				}
+			}
+		}
+	}
+
+	spath := ""
+	for i := len(parts) - 1; i >= 0; i-- {
+		spath = filepath.Join(spath, parts[i])
+	}
+
+	return spath
 }

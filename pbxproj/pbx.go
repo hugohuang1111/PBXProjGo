@@ -2,7 +2,7 @@ package pbxproj
 
 import (
 	"PBXProjGo/pbxproj/parser"
-	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
@@ -16,7 +16,8 @@ type PBXProject struct {
 	fileEncode string
 	project    pbxMap
 
-	uuidMap map[string]string
+	projectDir string
+	uuidMap    map[string]string
 
 	pbxParser      *parser.PBXProjParser
 	pbxTokenStream *antlr.CommonTokenStream
@@ -25,7 +26,8 @@ type PBXProject struct {
 // NewPBXProject create pbx project
 func NewPBXProject(pbxPBXProjectPath string) (PBXProject, error) {
 	var pbx PBXProject
-	input, _ := antlr.NewFileStream(os.Args[1])
+	pbx.projectDir = filepath.Join(pbxPBXProjectPath, "..", "..")
+	input, _ := antlr.NewFileStream(pbxPBXProjectPath)
 	lexer := parser.NewPBXProjLexer(input)
 	stream := antlr.NewCommonTokenStream(lexer, 0)
 	pbx.pbxTokenStream = stream
