@@ -26,7 +26,7 @@ type PBXProject struct {
 // NewPBXProject create pbx project
 func NewPBXProject(pbxPBXProjectPath string) (PBXProject, error) {
 	var pbx PBXProject
-	pbx.projectDir = filepath.Join(pbxPBXProjectPath, "..", "..")
+	pbx.projectDir, _ = filepath.Abs(filepath.Join(pbxPBXProjectPath, "..", ".."))
 	input, _ := antlr.NewFileStream(pbxPBXProjectPath)
 	lexer := parser.NewPBXProjLexer(input)
 	stream := antlr.NewCommonTokenStream(lexer, 0)

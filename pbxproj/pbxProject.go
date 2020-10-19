@@ -23,8 +23,7 @@ func (pbx PBXProject) addFile(target string, group string, file string) {
 	groupID, _ := pbx.addToGroup(group, frid)
 
 	groupPath := pbx.getGroupAbsPath(groupID)
-	fmt.Println(groupID)
-	fmt.Println(groupPath)
+	frMap["path"], _ = filepath.Rel(groupPath, absFilePath)
 
 	var bpMap pbxMap
 	switch dGroup {
@@ -326,8 +325,10 @@ func (pbx PBXProject) getGroupAbsPath(gid string) string {
 
 	spath := ""
 	for i := len(parts) - 1; i >= 0; i-- {
-		spath = filepath.Join(spath, parts[i])
+		if len(parts[i]) > 0 {
+			spath = filepath.Join(spath, parts[i])
+		}
 	}
 
-	return spath
+	return filepath.Join(pbx.projectDir, spath)
 }

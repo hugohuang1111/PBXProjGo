@@ -42,6 +42,7 @@ func init() {
 		"xcassets":    "folder.assetcatalog",
 		"xcconfig":    "text.xcconfig",
 		"xcdatamodel": "wrapper.xcdatamodel",
+		"xcframework": "wrapper.framework",
 		"xcodeproj":   "wrapper.pb-project",
 		"xctest":      "wrapper.cfbundle",
 		"xib":         "file.xib",
