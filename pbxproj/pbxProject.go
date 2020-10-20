@@ -236,30 +236,6 @@ func (pbx PBXProject) getOrCreateGroup(group string) (string, pbxMap) {
 		}
 	}
 
-	// // try group as name
-	// for key, value := range objMap {
-	// 	valMap := value.(pbxMap)
-	// 	if 0 == strings.Compare(valMap["isa"].(string), "PBXGroup") &&
-	// 		0 == strings.Compare(valMap["name"].(string), group) {
-	// 		return key, valMap
-	// 	}
-	// }
-
-	// // create group
-	// key := genUUID()
-	// m := make(pbxMap)
-	// m = make(map[string]interface{})
-	// m["isa"] = "PBXGroup"
-	// m["name"] = path.Base(group)
-	// if fileIsExist(group) {
-	// 	m["path"] = group
-	// }
-	// m["sourceTree"] = DEFAULT_SOURCETREE
-
-	// objMap[key] = m
-
-	// pbx.uuidMap[key] = fmt.Sprintf("/* %v */", m["name"])
-
 	return curGroupID, groupMap
 }
 

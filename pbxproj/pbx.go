@@ -8,9 +8,6 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
-// "PBXProjGo/parser"
-// "github.com/antlr/antlr4/runtime/Go/antlr"
-
 // PBXProject pbxproj struct
 type PBXProject struct {
 	fileEncode string
@@ -82,23 +79,37 @@ func (pbx PBXProject) GetTargets() []string {
 	return targets
 }
 
-func (pbx PBXProject) AddFile(target string, group string, file string) {
+// func (pbx PBXProject) AddFile(target string, group string, file string) {
+// 	pbx.addFile(target, group, file)
+// }
+
+// AddSourceFile add source file
+func (pbx PBXProject) AddSourceFile(target string, group string, file string) {
 	pbx.addFile(target, group, file)
 }
 
+// AddHeaderFile add header file
+func (pbx PBXProject) AddHeaderFile(target string, group string, file string) {
+	pbx.addFile(target, group, file)
+}
+
+// AddFramework add framework
 func (pbx PBXProject) AddFramework(target string, file string) {
 	pbx.addFile(target, "", file)
 }
 
+// AddResource add resource
 func (pbx PBXProject) AddResource(target string, file string) {
 	pbx.addFile(target, "", file)
 }
 
+// GetBuildSetting get build setting
 func (pbx PBXProject) GetBuildSetting(target string, mode string, key string) interface{} {
 	bsMap := pbx.getBuildSetting(target, mode)
 	return bsMap[key]
 }
 
+// SetBuildSetting set build setting
 func (pbx PBXProject) SetBuildSetting(target string, mode string, key string, val interface{}) {
 	bsMap := pbx.getBuildSetting(target, mode)
 	bsMap[key] = val
