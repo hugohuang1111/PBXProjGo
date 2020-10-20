@@ -45,6 +45,14 @@ func (m pbxMap) getValueMap(keys ...string) pbxMap {
 	return v.(pbxMap)
 }
 
+func (m pbxMap) setPath(path string, sourcetree string) {
+	if nil == m {
+		return
+	}
+	m["sourceTree"] = sourcetree
+	m["path"] = path
+}
+
 /*
  * Map Section related
  */
@@ -67,10 +75,7 @@ func getSectionNames(m pbxMap) []string {
 	return sections
 }
 
-/*
- * PBXGroup related
- */
-func pbxGroupSourceTreeMatch(m pbxMap, st string) bool {
+func pbxSourceTreeMatch(m pbxMap, st string) bool {
 	if v, ok := m["sourceTree"]; ok {
 		if 0 == strings.Compare(st, v.(string)) {
 			return true
@@ -83,6 +88,10 @@ func pbxGroupSourceTreeMatch(m pbxMap, st string) bool {
 	}
 	return false
 }
+
+/*
+ * PBXGroup related
+ */
 
 func pbxGroupPath(m pbxMap) string {
 	if v, ok := m["path"]; ok {

@@ -2,8 +2,13 @@ package pbxproj
 
 import (
 	"path"
+	"path/filepath"
 	"strconv"
 )
+
+//group
+//absolute
+//SOURCE_ROOT
 
 const (
 	DEFAULT_SOURCETREE         = "<group>"
@@ -42,7 +47,7 @@ func init() {
 		"xcassets":    "folder.assetcatalog",
 		"xcconfig":    "text.xcconfig",
 		"xcdatamodel": "wrapper.xcdatamodel",
-		"xcframework": "wrapper.framework",
+		"xcframework": "wrapper.xcframework",
 		"xcodeproj":   "wrapper.pb-project",
 		"xctest":      "wrapper.cfbundle",
 		"xib":         "file.xib",
@@ -54,6 +59,7 @@ func init() {
 		"compiled.mach-o.dylib":                  "Frameworks",
 		"sourcecode.text-based-dylib-definition": "Frameworks",
 		"wrapper.framework":                      "Frameworks",
+		"wrapper.xcframework":                    "Frameworks",
 		"embedded.framework":                     "Embed Frameworks",
 		"sourcecode.c.h":                         "Resources",
 		"sourcecode.c.objc":                      "Sources",
@@ -65,12 +71,14 @@ func init() {
 		"compiled.mach-o.dylib":                  "usr/lib/",
 		"sourcecode.text-based-dylib-definition": "usr/lib/",
 		"wrapper.framework":                      "System/Library/Frameworks/",
+		"wrapper.xcframework":                    "System/Library/Frameworks/",
 	}
 
 	SOURCETREE_BY_FILETYPE = map[string]string{
 		"compiled.mach-o.dylib":                  "SDKROOT",
 		"sourcecode.text-based-dylib-definition": "SDKROOT",
 		"wrapper.framework":                      "SDKROOT",
+		"wrapper.xcframework":                    "SDKROOT",
 	}
 
 	ENCODING_BY_FILETYPE = map[string]int{
@@ -107,20 +115,33 @@ func detectGroup(fr pbxMap) string {
 	return DEFAULT_GROUP
 }
 
-func newPBXFileRef(filePath string) pbxMap {
+func (pbx PBXProject) newPBXFileRef(frPath string) pbxMap {
 	m := make(pbxMap, 0)
 	m["isa"] = "PBXFileReference"
-	filetype := detectType(filePath)
+	filetype := detectType(frPath)
 	m["lastKnownFileType"] = filetype
-	m["name"] = path.Base(filePath)
-	m["path"] = filePath
+	m["name"] = path.Base(frPath)
 	if v, ok := ENCODING_BY_FILETYPE[filetype]; ok {
 		m["fileEncoding"] = strconv.Itoa(v)
 	}
-	if sourcetree, exist := SOURCETREE_BY_FILETYPE[filetype]; exist {
-		m["sourceTree"] = sourcetree
+
+	if filepath.IsAbs(frPath) {
+		m.setPath(frPath, "<absolute>")
 	} else {
-		m["sourceTree"] = DEFAULT_SOURCETREE
+		frFullPath := filepath.Join(pbx.projectDir, frPath)
+		if isFileExist(frFullPath) {
+			m.setPath(frPath, "<SOURCE_ROOT>")
+		} else {
+			frPath1, ok := PATH_BY_FILETYPE[filetype]
+			if !ok {
+				frPath1 = frPath
+			}
+			frst, ok := SOURCETREE_BY_FILETYPE[filetype]
+			if !ok {
+				frst = DEFAULT_SOURCETREE
+			}
+			m.setPath(frPath1, frst)
+		}
 	}
 
 	return m
