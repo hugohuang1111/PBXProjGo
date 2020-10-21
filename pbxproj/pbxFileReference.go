@@ -150,10 +150,13 @@ func (pbx PBXProject) newPBXFileRef(frPath string) pbxMap {
 	} else {
 		frFullPath := filepath.Join(pbx.projectDir, frPath)
 		if isFileExist(frFullPath) {
-			m.setPath(frPath, "<SOURCE_ROOT>")
+			m.setPath(frFullPath, "<absolute>")
+			// m.setPath(frPath, "SOURCE_ROOT")
 		} else {
 			frPath1, ok := PATH_BY_FILETYPE[filetype]
-			if !ok {
+			if ok {
+				frPath1 = frPath1 + frPath
+			} else {
 				frPath1 = frPath
 			}
 			frst, ok := SOURCETREE_BY_FILETYPE[filetype]

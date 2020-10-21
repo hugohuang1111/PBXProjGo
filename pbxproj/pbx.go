@@ -96,6 +96,12 @@ func (pbx PBXProject) AddHeaderFile(target string, group string, file string) {
 // AddFramework add framework
 func (pbx PBXProject) AddFramework(target string, file string) {
 	pbx.addFile(target, "", file)
+
+	for _, mode := range []string{"Debug", "Release"} {
+		bsMap := pbx.getBuildSetting(target, mode)
+		bsMap.appendChild("FRAMEWORK_SEARCH_PATHS", "$(inherited)")
+		bsMap.appendChild("FRAMEWORK_SEARCH_PATHS", "$(PROJECT_DIR)")
+	}
 }
 
 // AddResource add resource

@@ -186,7 +186,23 @@ func (pbx PBXProject) addToGroup(group string, frid string) (string, pbxMap) {
 	gid, grpMap := pbx.getOrCreateGroup(group)
 	grpMap.appendChild("children", frid)
 
+	frMap := pbx.getMapByID(frid)
+	if pbxSourceTreeMatch(frMap, "<absolute>") {
+		groupPath := pbx.getAbsPathByMap(gid, grpMap)
+		frPath := pbx.getAbsPathByID(frid)
+		frRelPath, _ := filepath.Rel(groupPath, frPath)
+		frMap.setPath(frRelPath, "<group>")
+	}
+
 	return gid, grpMap
+}
+
+func (pbx PBXProject) getMapByID(id string) pbxMap {
+	objMap := pbx.project["objects"].(pbxMap)
+	if val, ok := objMap[id]; ok {
+		return val.(pbxMap)
+	}
+	return nil
 }
 
 func (pbx PBXProject) getOrCreateGroup(group string) (string, pbxMap) {
