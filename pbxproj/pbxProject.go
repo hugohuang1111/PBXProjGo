@@ -10,7 +10,7 @@ import (
 func (pbx PBXProject) addFile(target string, group string, file string) {
 	frid, frMap := pbx.createOrFindFileReferencesByPath(file)
 
-	dGroup := detectGroup(frMap)
+	dGroup := detectBuildPhase(frMap)
 
 	if len(group) > 0 {
 		pbx.addToGroup(group, frid)
@@ -55,7 +55,11 @@ func (pbx PBXProject) findFileReferencesByPath(path string) (string, pbxMap) {
 		if valMap.getValueString("isa") == "PBXFileReference" &&
 			valMap.getValueString("name") == baseName {
 			if pbxSourceTreeMatch(valMap, "<group>") {
-				if pbx.getAbsPathByMap(uuid, valMap) == path {
+				absPath := path
+				if !filepath.IsAbs(absPath) {
+					absPath = filepath.Join(pbx.projectDir, path)
+				}
+				if pbx.getAbsPathByMap(uuid, valMap) == absPath {
 					return uuid, valMap
 				}
 			} else {
@@ -229,7 +233,7 @@ func (pbx PBXProject) getOrCreateGroup(group string) (string, pbxMap) {
 		for _, val := range groupMap["children"].([]interface{}) {
 			gid := val.(string)
 			childMap := objMap[gid].(pbxMap)
-			if childMap.getValueString("name") == gname {
+			if childMap.getName() == gname {
 				find = true
 				curGroupID = gid
 				groupMap = childMap

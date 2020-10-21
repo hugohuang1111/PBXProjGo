@@ -34,6 +34,21 @@ func (m pbxMap) getValueString(keys ...string) string {
 	return v.(string)
 }
 
+func (m pbxMap) getName() string {
+	val, ok := m["name"]
+	sName := ""
+	if ok {
+		sName = val.(string)
+	} else {
+		val, ok = m["path"]
+		if ok {
+			sName = val.(string)
+		}
+	}
+
+	return sName
+}
+
 func (m pbxMap) getValueMap(keys ...string) pbxMap {
 	if nil == m {
 		return nil

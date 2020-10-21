@@ -19,13 +19,13 @@ func main() {
 	targetName := targets[0]
 
 	// add source file
-	// pbxProject.AddFile(targetName, "ios", "/Users/hugo/Documents/work/learn/PBXProjGo/projects/Test/bb/A1.h")
-	// pbxProject.AddFile(targetName, "ios", "/Users/hugo/Documents/work/learn/PBXProjGo/projects/Test/bb/A1.cpp")
-	// pbxProject.AddFile(targetName, "ios", "/Users/hugo/Documents/work/learn/PBXProjGo/projects/Test/bb/A1.mm")
+	pbxProject.AddSourceFile(targetName, "Test", "Test/T.m")
+
+	// add header file
+	pbxProject.AddHeaderFile(targetName, "Test", "Test/T.h")
 
 	// add framework
-	// pbxProject.AddFramework(targetName, "ios", "/Users/hugo/Documents/work/learn/PBXProjGo/projects/Test/t.framework")
-	pbxProject.AddFramework(targetName, "/Users/hugo/Documents/work/learn/PBXProjGo/projects/Test/t.xcframework")
+	pbxProject.AddFramework(targetName, "Accounts.framework")
 
 	// modify build setting
 	// val := pbxProject.GetBuildSetting(targetName, "Debug", "OTHER_LDFLAGS")
