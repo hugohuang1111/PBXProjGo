@@ -9,37 +9,31 @@ import (
 
 func (pbx PBXProject) addFile(target string, group string, file string) {
 	frid, frMap := pbx.createOrFindFileReferencesByPath(file)
-	pbx.addToGroup(group, frid)
 
 	dGroup := detectGroup(frMap)
+
+	if len(group) > 0 {
+		pbx.addToGroup(group, frid)
+	} else {
+		pbx.addToGroup(dGroup, frid)
+	}
+
 	var bpMap pbxMap
-	fileid := ""
+	fileid, _ := pbx.addBuildFileIf(target, frid)
+	if 0 == len(fileid) {
+		fileid = frid
+	}
 	switch dGroup {
 	case "Sources":
-		{
-			_, bpMap = pbx.getSourcesBuildPhase(target)
-			fileid, _ = pbx.addBuildFileIf(target, frid)
-		}
+		_, bpMap = pbx.getSourcesBuildPhase(target)
 	case "Frameworks", "Embed Frameworks":
-		{
-			_, bpMap = pbx.getFrameworksBuildPhase(target)
-			fileid, _ = pbx.addBuildFileIf(target, frid)
-		}
+		_, bpMap = pbx.getFrameworksBuildPhase(target)
 	case "Resources":
-		{
-			_, bpMap = pbx.getResourcesBuildPhase(target)
-			fileid = frid
-		}
+		_, bpMap = pbx.getResourcesBuildPhase(target)
+		fileid = frid
 	}
 	if nil != bpMap {
-		var val []interface{}
-		if v, ok := bpMap["files"]; ok {
-			val = v.([]interface{})
-		} else {
-			val = make([]interface{}, 0)
-		}
-		val = append(val, fileid)
-		bpMap["files"] = val
+		bpMap.appendChild("files", fileid)
 	}
 }
 
@@ -190,15 +184,7 @@ func (pbx PBXProject) addFileReference(frMap pbxMap) string {
 
 func (pbx PBXProject) addToGroup(group string, frid string) (string, pbxMap) {
 	gid, grpMap := pbx.getOrCreateGroup(group)
-	valChildren := grpMap["children"]
-	var children []interface{}
-	if nil == valChildren {
-		children = make([]interface{}, 0)
-	} else {
-		children = valChildren.([]interface{})
-	}
-	children = append(children, frid)
-	grpMap["children"] = children
+	grpMap.appendChild("children", frid)
 
 	return gid, grpMap
 }
@@ -226,9 +212,11 @@ func (pbx PBXProject) getOrCreateGroup(group string) (string, pbxMap) {
 		}
 		for _, val := range groupMap["children"].([]interface{}) {
 			gid := val.(string)
-			if 0 == strings.Compare(gid, gname) {
+			childMap := objMap[gid].(pbxMap)
+			if childMap.getValueString("name") == gname {
 				find = true
-				groupMap = objMap[gid].(pbxMap)
+				curGroupID = gid
+				groupMap = childMap
 				break
 			}
 		}
@@ -244,7 +232,7 @@ func (pbx PBXProject) getOrCreateGroup(group string) (string, pbxMap) {
 			}
 
 			objMap[curGroupID] = m
-			groupMap["children"] = append(groupMap["children"].([]interface{}), curGroupID)
+			groupMap.appendChild("children", curGroupID)
 
 			pbx.uuidMap[curGroupID] = fmt.Sprintf("/* %v */", m["name"])
 
@@ -255,6 +243,7 @@ func (pbx PBXProject) getOrCreateGroup(group string) (string, pbxMap) {
 	return curGroupID, groupMap
 }
 
+// addBuildFileIf add build file if needed or if not exist
 func (pbx PBXProject) addBuildFileIf(target string, frid string) (retBFID string, exists bool) {
 	objMap := pbx.project["objects"].(pbxMap)
 
@@ -268,7 +257,21 @@ func (pbx PBXProject) addBuildFileIf(target string, frid string) (retBFID string
 		}
 	}
 
-	_, bpMap := pbx.getSourcesBuildPhase(target)
+	frMap := objMap[frid].(pbxMap)
+	var bpMap pbxMap
+	switch detectBuildPhase(frMap) {
+	case "Frameworks":
+		_, bpMap = pbx.getFrameworksBuildPhase(target)
+	case "Sources":
+		_, bpMap = pbx.getSourcesBuildPhase(target)
+	case "Resources":
+		_, bpMap = pbx.getResourcesBuildPhase(target)
+	}
+
+	if nil == bpMap {
+		return "", false
+	}
+
 	bpChildren := bpMap.getValue("files")
 	for _, bfid := range bfids {
 		if ok, _ := inArray(bfid, bpChildren); ok {

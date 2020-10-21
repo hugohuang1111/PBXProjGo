@@ -23,6 +23,7 @@ var GROUP_BY_FILETYPE map[string]string
 var PATH_BY_FILETYPE map[string]string
 var SOURCETREE_BY_FILETYPE map[string]string
 var ENCODING_BY_FILETYPE map[string]int
+var buildPhaseByFileType map[string]string
 
 func init() {
 	FILETYPE_BY_EXTENSION = map[string]string{
@@ -92,6 +93,16 @@ func init() {
 		"text.xcconfig":      4,
 		"text.plist.strings": 4,
 	}
+
+	buildPhaseByFileType = map[string]string{
+		"wrapper.framework":   "Frameworks",
+		"wrapper.xcframework": "Frameworks",
+		"embedded.framework":  "Frameworks",
+		"sourcecode.c.objc":   "Sources",
+		"sourcecode.cpp.cpp":  "Sources",
+		"sourcecode.swift":    "Sources",
+		"text.plist.strings":  "Resources",
+	}
 }
 
 func detectType(filePath string) string {
@@ -113,6 +124,15 @@ func detectGroup(fr pbxMap) string {
 	}
 
 	return DEFAULT_GROUP
+}
+
+func detectBuildPhase(fr pbxMap) string {
+	filetype := fr["lastKnownFileType"].(string)
+	if bp, ok := buildPhaseByFileType[filetype]; ok {
+		return bp
+	}
+
+	return ""
 }
 
 func (pbx PBXProject) newPBXFileRef(frPath string) pbxMap {

@@ -14,6 +14,7 @@ func main() {
 		return
 	}
 
+	// get targets
 	targets := pbxProject.GetTargets()
 	targetName := targets[0]
 
@@ -36,7 +37,7 @@ func main() {
 	// pbxProject.SetBuildSetting(targetName, "Debug", "OTHER_LDFLAGS", lfs)
 
 	// save file
-	e = pbxProject.Save("newpbx.pbxproj")
+	e = pbxProject.Save(pbxFilePath)
 	if nil != e {
 		fmt.Println(e.Error())
 		return

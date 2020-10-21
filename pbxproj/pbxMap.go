@@ -53,6 +53,20 @@ func (m pbxMap) setPath(path string, sourcetree string) {
 	m["path"] = path
 }
 
+func (m pbxMap) appendChild(key string, val interface{}) {
+	valChildren, ok := m[key]
+	var children []interface{}
+	if ok {
+		children = valChildren.([]interface{})
+	} else {
+		children = make([]interface{}, 0)
+	}
+	if exist, _ := inArray(val, children); !exist {
+		children = append(children, val)
+		m[key] = children
+	}
+}
+
 /*
  * Map Section related
  */
