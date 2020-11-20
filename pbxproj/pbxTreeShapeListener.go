@@ -1,8 +1,9 @@
 package pbxproj
 
 import (
-	"PBXProjGo/pbxproj/parser"
 	"fmt"
+
+	"github.com/hugohuang1111/PBXProjGo/pbxproj/parser"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )

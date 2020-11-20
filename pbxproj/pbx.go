@@ -1,9 +1,11 @@
 package pbxproj
 
 import (
-	"PBXProjGo/pbxproj/parser"
+	"errors"
 	"path/filepath"
 	"strings"
+
+	"github.com/hugohuang1111/PBXProjGo/pbxproj/parser"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
@@ -23,6 +25,11 @@ type PBXProject struct {
 // NewPBXProject create pbx project
 func NewPBXProject(pbxPBXProjectPath string) (PBXProject, error) {
 	var pbx PBXProject
+
+	if !isFileExist(pbxPBXProjectPath) {
+		return pbx, errors.New("File not exist")
+	}
+
 	pbx.projectDir, _ = filepath.Abs(filepath.Join(pbxPBXProjectPath, "..", ".."))
 	input, _ := antlr.NewFileStream(pbxPBXProjectPath)
 	lexer := parser.NewPBXProjLexer(input)

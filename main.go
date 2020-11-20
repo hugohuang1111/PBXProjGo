@@ -1,9 +1,10 @@
 package main
 
 import (
-	"PBXProjGo/pbxproj"
 	"fmt"
 	"path/filepath"
+
+	"github.com/hugohuang1111/PBXProjGo/pbxproj"
 )
 
 func main() {
