@@ -69,13 +69,15 @@ func (m pbxMap) setPath(path string, sourcetree string) {
 }
 
 func (m pbxMap) appendChild(key string, val interface{}) {
-	valChildren, ok := m[key]
-	var children []interface{}
+	valItem, ok := m[key]
+	var children []interface{} = nil
+
 	if ok {
-		children = valChildren.([]interface{})
+		children = makeSureIsStringArray(valItem)
 	} else {
-		children = make([]interface{}, 0)
+		children = make([]interface{}, 0, 2)
 	}
+
 	if exist, _ := inArray(val, children); !exist {
 		children = append(children, val)
 		m[key] = children
@@ -155,4 +157,17 @@ func pbxGroupIncludeChild(m pbxMap, gid string) bool {
 		}
 	}
 	return false
+}
+
+func makeSureIsStringArray(val interface{}) []interface{} {
+	sa := make([]interface{}, 0, 2)
+	switch val.(type) {
+	case string:
+		s := val.(string)
+		sa = append(sa, s)
+	case []interface{}:
+		sa = val.([]interface{})
+	}
+
+	return sa
 }
