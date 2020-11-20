@@ -1,4 +1,4 @@
-module PBXProjGo
+module github.com/hugohuang1111/PBXProjGo
 
 go 1.14
 
