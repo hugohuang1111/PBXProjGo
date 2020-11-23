@@ -55,6 +55,7 @@ func (pbx PBXProject) Save(filePath string) error {
 
 	f.writeFileEncode(pbx.fileEncode)
 	f.writeMap(pbx.project)
+	f.writeNewline()
 
 	f.Sync()
 
